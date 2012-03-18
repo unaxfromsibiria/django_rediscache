@@ -1,0 +1,223 @@
+===============================================================
+Server and soft:
+OS: Debian 3.2.0-1-amd64 x86_64 GNU/Linux
+CPU: Intel(R) Core(TM)2 Duo T6600 2.20GHz
+RAM: 3 Gb
+postgresql: 9.1.2-4
+python-psycopg2: 2.4.4-3
+Python: 2.7.2+
+Django version: 1.4 alpha
+redis-server: 2.4.5-1
+python-redis: 2.4.9-1
+Web-server: nginx 1.1.14-1 + uWSGI 1.0.3-debian (64bit)
+===============================================================
+Cache used! 1000 and 20000 operations results:
+-- get random model 1000 times --
+operations time: 0.32057094574
+-- get reference model 1000 times --
+operations time: 0.371485948563
+-- get reference list of model 1000 times (m2m test) --
+operations time: 5.7958381176 selected object count: 8239 
+-- select one list 1000 times --
+operations time: 5.23743605614 selected object count: 185610
+-- select different lists --
+operations time: 12.9834880829 selected object count: 146499
+
+-- get random model 1000 times --
+operations time: 0.215187072754
+-- get reference model 1000 times --
+operations time: 0.218665122986
+-- get reference list of model 1000 times (m2m test) --
+operations time: 3.43551492691 selected object count: 8001 
+-- select one list 1000 times --
+operations time: 4.96856808662 selected object count: 173483
+-- select different lists --
+operations time: 14.8196489811 selected object count: 141915
+
+-- get random model 1000 times --
+operations time: 0.183369874954
+-- get reference model 1000 times --
+operations time: 0.210381031036
+-- get reference list of model 1000 times (m2m test) --
+operations time: 3.21999311447 selected object count: 8175 
+-- select one list 1000 times --
+operations time: 4.7698059082 selected object count: 190000
+-- select different lists --
+operations time: 14.8147919178 selected object count: 149589
+
+-- get random model 1000 times --
+operations time: 0.321320056915
+-- get reference model 1000 times --
+operations time: 0.371361970901
+-- get reference list of model 1000 times (m2m test) --
+operations time: 6.09173107147 selected object count: 8005 
+-- select one list 1000 times --
+operations time: 5.10595703125 selected object count: 180011
+-- select different lists --
+operations time: 12.8532168865 selected object count: 149784
+
+-- get random model 20000 times --
+operations time: 3.60229206085
+-- get reference model 20000 times --
+operations time: 7.34041309357
+-- get reference list of model 20000 times (m2m test) --
+operations time: 36.4506080151 selected object count: 160306 
+-- select one list 20000 times --
+operations time: 139.150392056 selected object count: 3401136
+-- select different lists --
+operations time: 138.183703899 selected object count: 3022065
+
+-- get random model 20000 times --
+operations time: 6.34660196304
+-- get reference model 20000 times --
+operations time: 7.31575703621
+-- get reference list of model 20000 times (m2m test) --
+operations time: 30.1702728271 selected object count: 159867 
+-- select one list 20000 times --
+operations time: 117.328479052 selected object count: 3406104
+-- select different lists --
+operations time: 137.81270504 selected object count: 3033487
+
+-- get random model 20000 times --
+operations time: 3.98448419571
+-- get reference model 20000 times --
+operations time: 5.86517286301
+-- get reference list of model 20000 times (m2m test) --
+operations time: 24.698184967 selected object count: 159916 
+-- select one list 20000 times --
+operations time: 133.964249134 selected object count: 4580000
+-- select different lists --
+operations time: 137.57632494 selected object count: 3014304
+
+-- get random model 20000 times --
+operations time: 3.60388708115
+-- get reference model 20000 times --
+operations time: 4.31445503235
+-- get reference list of model 20000 times (m2m test) --
+operations time: 30.8932240009 selected object count: 160623 
+-- select one list 20000 times --
+operations time: 148.438175917 selected object count: 3466320
+-- select different lists --
+operations time: 159.917999029 selected object count: 3024157
+
+-- get random model 20000 times --
+operations time: 6.42915892601
+-- get reference model 20000 times --
+operations time: 6.3044860363
+-- get reference list of model 20000 times (m2m test) --
+operations time: 34.9893960953 selected object count: 160225 
+-- select one list 20000 times --
+operations time: 127.416365862 selected object count: 3075540
+-- select different lists --
+operations time: 152.968822002 selected object count: 3020408
+
+-- get random model 20000 times --
+operations time: 4.54838609695
+-- get reference model 20000 times --
+operations time: 7.34644293785
+-- get reference list of model 20000 times (m2m test) --
+operations time: 35.7244651318 selected object count: 160243 
+-- select one list 20000 times --
+operations time: 150.586035967 selected object count: 3675438
+-- select different lists --
+operations time: 140.368042946 selected object count: 3036704
+
+-- get random model 20000 times --
+operations time: 6.18456792831
+-- get reference model 20000 times --
+operations time: 6.45275592804
+-- get reference list of model 20000 times (m2m test) --
+operations time: 21.2062690258 selected object count: 160304 
+-- select one list 20000 times --
+operations time: 107.328622103 selected object count: 3463047
+-- select different lists --
+operations time: 142.136602163 selected object count: 3011117
+===============================================================
+Without cache results. 1000 first and 20000 operations.
+-- get random model 1000 times --
+operations time: 1.47014904022
+-- get reference model 1000 times --
+operations time: 3.12818813324
+-- get reference list of model 1000 times (m2m test) --
+operations time: 7.30331301689 selected object count: 8015 
+-- select one list 1000 times --
+operations time: 14.7240209579 selected object count: 184149
+-- select different lists --
+operations time: 14.9410488605 selected object count: 148922
+
+-- get random model 1000 times --
+operations time: 2.31120300293
+-- get reference model 1000 times --
+operations time: 4.90463495255
+-- get reference list of model 1000 times (m2m test) --
+operations time: 7.25785899162 selected object count: 7995 
+-- select one list 1000 times --
+operations time: 17.9076890945 selected object count: 231000
+-- select different lists --
+operations time: 15.6001160145 selected object count: 150637
+
+-- get random model 1000 times --
+operations time: 2.30995702744
+-- get reference model 1000 times --
+operations time: 3.49110507965
+-- get reference list of model 1000 times (m2m test) --
+operations time: 7.28953003883 selected object count: 7927 
+-- select one list 1000 times --
+operations time: 17.9239621162 selected object count: 235000
+-- select different lists --
+operations time: 15.536367178 selected object count: 151151
+
+-- get random model 20000 times --
+operations time: 46.1541149616
+-- get reference model 20000 times --
+operations time: 97.4535899162
+-- get reference list of model 20000 times (m2m test) --
+operations time: 145.669696093 selected object count: 159678 
+-- select one list 20000 times --
+operations time: 286.436187029 selected object count: 3398976
+-- select different lists --
+operations time: 305.533262014 selected object count: 3018496
+
+-- get random model 20000 times --
+operations time: 45.4268510342
+-- get reference model 20000 times --
+operations time: 95.4298820496
+-- get reference list of model 20000 times (m2m test) --
+operations time: 145.382869959 selected object count: 160315
+-- select one list 20000 times --
+operations time: 337.182766199 selected object count: 4620000
+-- select different lists --
+operations time: 306.46145606 selected object count: 3024124
+
+-- get random model 20000 times --
+operations time: 45.9976351261
+-- get reference model 20000 times --
+operations time: 96.5870740414
+-- get reference list of model 20000 times (m2m test) --
+operations time: 145.275097132 selected object count: 159823 
+-- select one list 20000 times --
+operations time: 355.755696058 selected object count: 4700000
+-- select different lists --
+operations time: 311.269059896 selected object count: 3040063
+
+-- get random model 20000 times --
+operations time: 44.558743
+-- get reference model 20000 times --
+operations time: 96.186136961
+-- get reference list of model 20000 times (m2m test) --
+operations time: 145.576538086 selected object count: 160812 
+-- select one list 20000 times --
+operations time: 311.583977938 selected object count: 3800000
+-- select different lists --
+operations time: 312.481269121 selected object count: 3014396
+
+-- get random model 20000 times --
+operations time: 46.0962121487
+-- get reference model 20000 times --
+operations time: 98.0248601437
+-- get reference list of model 20000 times (m2m test) --
+operations time: 145.735107899 selected object count: 160593 
+-- select one list 20000 times --
+operations time: 360.438225031 selected object count: 4600000
+-- select different lists --
+operations time: 360.214241028 selected object count: 3006321
