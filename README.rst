@@ -5,6 +5,7 @@ About
 
 Dependencies
 ============
+- django
 - python-redis
 
 Usage
