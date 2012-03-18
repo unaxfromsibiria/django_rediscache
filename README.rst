@@ -47,7 +47,7 @@ Create section DJANGO_REDISCACHE in django settings::
 	        'db'  : 2,
 	        'socket_timeout': 5,
 	    },               
-	    'used' : False,
+	    'used' : True,
 	    'keyhashed' : True,
 	}
 
@@ -55,6 +55,5 @@ Create section DJANGO_REDISCACHE in django settings::
 - `'list' - use cache in QuerySet, you just need to call method ".cache()" after of all "filter" and "order_by"`
 - `'get' - use cache in QuerySet for all get request`
 
-And don't forget add 'django_rediscache' in INSTALLED_APPS
-All simple and can sometimes be effective, look at test results.
+And don't forget add 'django_rediscache' in INSTALLED_APPS. All simple and can sometimes be effective, look at test results.
 Sincerely, Michael Vorotyntsev.
