@@ -56,4 +56,5 @@ Create section DJANGO_REDISCACHE in django settings::
 - `'get' - use cache in QuerySet for all get request`
 
 And don't forget add 'django_rediscache' in INSTALLED_APPS. All simple and can sometimes be effective, look at test results.
+There is analog project if it will be usefull https://github.com/Suor/django-cacheops
 Sincerely, Michael Vorotyntsev.

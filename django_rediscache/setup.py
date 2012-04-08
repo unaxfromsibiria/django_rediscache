@@ -9,13 +9,13 @@ from django.db.models.signals import post_save, post_delete
 from invalidation import model_change
 
 def _post_save(sender, **kwargs):
-    if kwargs.get('created'):
-        instance = kwargs.get('instance')
+    instance = kwargs.get('instance')
+    if instance:
         model_change(instance.pk, instance._meta.db_table)
 
 def _post_delete(sender, **kwargs):
-    if kwargs.get('created'):
-        instance = kwargs.get('instance')
+    instance = kwargs.get('instance')
+    if instance:
         model_change(instance.pk, instance._meta.db_table)
 
 def install():
