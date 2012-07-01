@@ -1,7 +1,10 @@
 About
 ==========
+
 :Info: Simple tools for caching models of Django ORM.
+
 :Author: Michael
+
 
 Dependencies
 ============
