@@ -8,8 +8,9 @@ import cPickle as pickle
 from functools import wraps
 from django.utils.hashcompat import md5_constructor
 import redis
-from django.core.exceptions import ImproperlyConfigured
-from django.conf import settings
+from config import redis_conf
+
+DEFAULT_TIMEOUT=600
 
 class BaseCache(object):
     def cached(self, extra=None, timeout=None):
@@ -41,8 +42,6 @@ class RedisCache(BaseCache):
         self.conn = conn
 
     def get(self, cache_key):
-        if self.conn is None:
-            return None
         data = self.conn.get(cache_key)
         if data is None:
             return None
@@ -77,7 +76,7 @@ class RedisCache(BaseCache):
     def delete(self, cache_key ):
         return self.conn.delete(cache_key)
 
-    def set(self, cache_key, data, timeout=None):
+    def set(self, cache_key, data, timeout=DEFAULT_TIMEOUT):
         if self.conn is None:
             return
         pickled_data = pickle.dumps(data)
@@ -93,22 +92,15 @@ class RedisCache(BaseCache):
         except: return False
         return True
     
-try:
-    redis_conf = settings.DJANGO_REDISCACHE.get('redis')
-except AttributeError:
-    raise ImproperlyConfigured('Check DJANGO_REDISCACHE in settings. ')
-
-try:    redis_conn = redis.Redis(**redis_conf)
-except: redis_conn = None
-
-class _queryset_list(list):
-    def __init__(self, anylist=None):
-        if anylist is None:
-            super(_queryset_list, self).__init__()
-        else:
-            super(_queryset_list, self).__init__(anylist)
+    def append_to_list(self, list_cache_key, data):
+        self.conn.rpush(list_cache_key, data)
     
-    def count(self):
-        return len(self)
+    def get_all_list(self, list_cache_key):
+        return  self.conn.lrange(list_cache_key, 0, -1)
+
+try:
+    redis_conn = redis.Redis(**redis_conf)
+except:
+    redis_conn = None
 
 _internal_cache = RedisCache(redis_conn)

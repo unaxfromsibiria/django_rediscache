@@ -3,26 +3,27 @@ Created on 10.03.2012
 
 @author: unax
 '''
-from django.conf import settings
 from queryset import get_query_set
 from django.db.models.signals import post_save, post_delete
 from invalidation import model_change
+from config import get_scheme, is_userd
 
 def _post_save(sender, **kwargs):
-    instance = kwargs.get('instance')
-    if instance:
+    if kwargs.get('created'):
+        instance = kwargs.get('instance')
         model_change(instance.pk, instance._meta.db_table)
 
 def _post_delete(sender, **kwargs):
-    instance = kwargs.get('instance')
-    if instance:
+    if kwargs.get('created'):
+        instance = kwargs.get('instance')
         model_change(instance.pk, instance._meta.db_table)
 
 def install():
-    if not bool(settings.DJANGO_REDISCACHE.get('used')): return
+    if not is_userd():
+        return
     from django.db.models import get_models
     for model in get_models(include_auto_created=True):
-        scheme=settings.DJANGO_REDISCACHE.get('scheme').get(str(model.__module__).replace('models',model.__name__))
+        scheme=get_scheme(model)
         if isinstance(scheme, dict):
             model._django_rediscache={}
             setattr(model.objects.__class__, 'get_query_set', get_query_set)

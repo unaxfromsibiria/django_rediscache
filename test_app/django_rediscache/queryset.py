@@ -4,23 +4,24 @@ Created on 06.03.2012
 @author: unax
 '''
 from django.db import models
-from misc import CacheNameMixer, _queryset_list
+from misc import CacheNameMixer
+from helper import _queryset_list
 from django.db.models.query import QuerySet
-from django.conf import settings
 from cache import _internal_cache as cache
+from config import get_scheme
 import journal
 
 class CachedQuerySet(QuerySet):
     __cache_scheme=None
     __table=None
     def __init__(self, model=None, query=None, using=None):
-        self.__cache_scheme=settings.DJANGO_REDISCACHE.get('scheme').get(str(model.__module__).replace('models',model.__name__))
+        self.__cache_scheme=get_scheme(model)
         super(CachedQuerySet, self).__init__(model, query, using)
         self.__table=self.model._meta.db_table
-            
+
     def cache_scheme(self):
         return self.__cache_scheme
-    
+
     def __timeout(self, request):
         if request and self.__cache_scheme:
             res=self.__cache_scheme.get(request)
@@ -34,7 +35,6 @@ class CachedQuerySet(QuerySet):
     def cache(self):
         timeout=self.__timeout('list')
         if timeout and timeout>0:
-            
             cache_key="%s:list:%s"%(self.__table, str(CacheNameMixer(self.core_cache_name())) )
             res=cache.get(cache_key)
             if res is None:

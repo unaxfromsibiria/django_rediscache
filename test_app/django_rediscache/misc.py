@@ -10,20 +10,12 @@ from datetime import datetime
 import hashlib
 from django.conf import settings
 from re import _pattern_type
+from django.db.models.query import QuerySet
 
 try:
     HASHED_NAME_ALWAYS=settings.DJANGO_REDISCACHE.get('keyhashed')
 except:
     HASHED_NAME_ALWAYS=False
-
-class _queryset_list(list):
-    def __init__(self, anylist=None):
-        if anylist is None:
-            super(_queryset_list, self).__init__()
-        else:
-            super(_queryset_list, self).__init__(anylist)
-    def count(self):
-        return len(self)
 
 class CacheNameMixer(object):
     __line=None
@@ -54,8 +46,8 @@ class CacheNameMixer(object):
         return self.__line is not None and len(self.__line)>0
 
     def __create_str(self, query_obj ):
-        if isinstance(query_obj, unicode) or isinstance(query_obj, str):
-            return query_obj.encode('utf8')
+        if isinstance(query_obj, (unicode, str)):
+            return unicode(query_obj)
         elif isinstance(query_obj, int):
             return str(query_obj)
         elif isinstance(query_obj, float):
@@ -70,6 +62,8 @@ class CacheNameMixer(object):
             return self.__parse(query_obj)
         elif isinstance(query_obj, tuple):
             return "(%s)" % (",".join( [ self.__create_str(obj) for obj in query_obj ] ))
+        elif isinstance(query_obj, list) or isinstance(query_obj, QuerySet):
+            return "[%s]" % (",".join( [ self.__create_str(obj) for obj in query_obj ] ))
         else:
             try:
                 return str(query_obj)
@@ -80,13 +74,11 @@ class CacheNameMixer(object):
     def __parse(self, query_dict ): # query_dict is dict, list or tuple
         if isinstance(query_dict,dict) and query_dict.keys()>0:
             query_line=[]
-            for key in query_dict:
-                query_line.append('%s=%s' % (key, self.__create_str(query_dict.get(key))) )
-            return "|".join(query_line)
+            for key in query_dict:                
+                query_line.append( u'%s=%s' % (key, self.__create_str(query_dict.get(key))) )
+            return (u"|".join(query_line)).encode('utf8')
         elif isinstance(query_dict,tuple) or isinstance(query_dict,list):
-            return "(%s)" % ( ",".join( [ self.__create_str(key) for key in query_dict ] ) )
-        elif isinstance(query_dict,str) or isinstance(query_dict,unicode):
-            return "request='%s'" % self.__create_str(query_dict)
+            return (u"(%s)" % ( u",".join( [ self.__create_str(key) for key in query_dict ] ) )).encode('utf8')
         return None
 
     def append(self, query_dict ):
