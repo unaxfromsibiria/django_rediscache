@@ -166,7 +166,29 @@ Here primitive test the speed of documents get::
 	total lists size 3.051 mb
 	
 	=== getting lists and his length ===
+
 	---- cache: on ----
+	Count&List test (operations count: 10000):
+	time: 32.1580269337
+	object count: 200000
+	total lists size 12.20 mb
+	
+	Count&List test (operations count: 10000):
+	time: 32.8594300747
+	object count: 200000
+	total lists size 12.20 mb
+	
+	Count&List test (operations count: 10000):
+	time: 32.5740377903
+	object count: 200000
+	total lists size 12.20 mb
+	
+	Count&List test (operations count: 10000):
+	time: 33.1423578262
+	object count: 200000
+	total lists size 12.20 mb
+
+	---- cache: off ----
 	Count&List test (operations count: 10000):
 	time: 85.3806550503
 	object count: 200000
@@ -186,30 +208,9 @@ Here primitive test the speed of documents get::
 	time: 85.112621069
 	object count: 200000
 	total lists size 12.20 mb
-	Count&List test (operations count: 10000):
 	
+	Count&List test (operations count: 10000):
 	time: 85.024310112
-	object count: 200000
-	total lists size 12.20 mb
-	
-	---- cache: off ----
-	Count&List test (operations count: 10000):
-	time: 32.1580269337
-	object count: 200000
-	total lists size 12.20 mb
-	
-	Count&List test (operations count: 10000):
-	time: 32.8594300747
-	object count: 200000
-	total lists size 12.20 mb
-	
-	Count&List test (operations count: 10000):
-	time: 32.5740377903
-	object count: 200000
-	total lists size 12.20 mb
-	
-	Count&List test (operations count: 10000):
-	time: 33.1423578262
 	object count: 200000
 	total lists size 12.20 mb
 	
