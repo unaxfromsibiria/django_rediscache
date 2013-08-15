@@ -47,7 +47,7 @@ class Model2(models.Model):
 class Model3(models.Model):
     name = models.CharField(u"Имя", max_length=32)
     number = models.IntegerField(u"Число")
-    models = models.ManyToManyField(Model1)
+    model_list = models.ManyToManyField(Model1)
     created = models.DateTimeField(u"Создан", default=datetime_now)
 
     class Meta:

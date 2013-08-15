@@ -11,6 +11,12 @@ Dependencies
 - django
 - python-redis
 
+
+Plans
+=====
+Edition for gevent. Need an modification for correctly work with gevent.
+
+
 Usage
 =====
 
@@ -66,18 +72,19 @@ You must append 'django_rediscache' to INSTALLED_APPS in last position::
 And create configuration section 'DJANGO_REDISCACHE' in Django settings::
 
 	DJANGO_REDISCACHE = {
-	    'scheme' : {'test_application.models.Model1' : {'all' : 3600},
-	                'test_application.models.Model2' : {'all' : 3600},
-	                'test_application.models.Model3' : {'all' : 3600},
-	                },
-	    'redis' : {
+	    'scheme': {
+	        'django_rediscache_test.app.models.Model1': {'all': 300},
+	        'django_rediscache_test.app.models.Model2': {'all': 300},
+	        'django_rediscache_test.app.models.Model3': {'all': 300},
+	    },
+	    'redis': {
 	        'host': 'localhost',
 	        'port': 6379,
-	        'db'  : 2,
+	        'db': 0,
 	        'socket_timeout': 5,
 	    },
-	    'used'      : True,
-	    'keyhashed' : 'crc',
+	    'used': True,
+	    'keyhashed': 'crc',
 	}
 
 'list' - accept use cache for all filter, exclude, order_by operation.
@@ -112,6 +119,7 @@ If you want flush cache for all collection try this::
 
 Simple tests
 =====
+This test is not fresh, but results shows the profit. Now 'django_rediscache_test' contains example of use (example django application deployed by `buildout <https://github.com/buildout/buildout>`_)
 OS and soft::
 
 	os: Debian GNU/Linux 3.2.0-3-amd64 x86_64

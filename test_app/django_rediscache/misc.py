@@ -37,10 +37,10 @@ class CacheNameMixer(object):
         self.__line = self.__parse(query_dict)
 
     def __str__(self):
-        return str(self.hash)
+        return self.hash
 
     def __unicode__(self):
-        return unicode(self.hash)
+        return self.hash
 
     @property
     def hash(self):

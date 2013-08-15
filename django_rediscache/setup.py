@@ -27,7 +27,6 @@ def install():
     if not config.create():
         return
     scheme = config.scheme
-    print scheme
     DEBUG = settings.DEBUG
     if len(scheme) < 1:
         if DEBUG:
@@ -48,7 +47,7 @@ def install():
                 model._default_manager.__class__,
                 'get_query_set',
                 get_query_set)
-            if isinstance(model_scheme.get('reference'), int):
+            if isinstance(model_scheme.get('reference'), int) or isinstance(model_scheme.get('all'), int):
                 _foreign_key_field_setup(model)
             post_delete.connect(CacheInvalidator.post_delete, sender=model)
             post_save.connect(CacheInvalidator.post_save, sender=model)

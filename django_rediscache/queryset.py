@@ -3,13 +3,13 @@ Created on 06.03.2012
 
 @author: unax
 '''
-from cache import _internal_cache as cache
-from config import LazySettings, ABSOLUTE_VERSION_LIMIT
+from .cache import _internal_cache as cache
+from .config import LazySettings, ABSOLUTE_VERSION_LIMIT
+from .helper import _queryset_list, SecondaryKey
+from .invalidation import model_change
+from .misc import CacheNameMixer
 from django.db import models
 from django.db.models.query import QuerySet
-from helper import _queryset_list, SecondaryKey
-from invalidation import model_change
-from misc import CacheNameMixer
 
 
 class CachedQuerySet(QuerySet):
@@ -20,7 +20,7 @@ class CachedQuerySet(QuerySet):
         super(CachedQuerySet, self).__init__(
             model=model, query=query, using=using)
         self.__cache_scheme = LazySettings().scheme.get(
-            "{0}.{1}".format(model.__module__, model.__name__))
+            "{0}.{1}".format(model.__module__, model.__name__)) or {}
         self.__table = self.model._meta.db_table
 
     @property
@@ -114,9 +114,8 @@ class CachedQuerySet(QuerySet):
         timeout = self.cache_scheme.get('get')
         document = None
         if isinstance(timeout, int):
-            core_cache_name = CacheNameMixer(kwargs)
-            cache_key = "{0}:get:{0}".format(
-                self.__table, core_cache_name)
+            cache_key = "{0}:get:{1}".format(
+                self.__table, CacheNameMixer(kwargs))
             document = cache.get(cache_key)
             if isinstance(document, SecondaryKey):
                 v = document.version
@@ -126,6 +125,7 @@ class CachedQuerySet(QuerySet):
 
             if not isinstance(document, models.Model):
                 document = super(CachedQuerySet, self).get(*args, **kwargs)
+
                 original_cache_key = "{0}:get:{1}".format(
                     self.__table, CacheNameMixer({'pk': document.pk}))
                 if original_cache_key != cache_key:
