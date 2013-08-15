@@ -4,9 +4,10 @@ Created on 28.10.2012
 
 @author: unax
 '''
-from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor
 from django.db import router
+from django.db.models.fields.related import ReverseSingleRelatedObjectDescriptor
 from queryset import CachedQuerySet
+
 
 class CachedReverseSingleRelatedObjectDescriptor(ReverseSingleRelatedObjectDescriptor):
 

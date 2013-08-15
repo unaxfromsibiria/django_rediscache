@@ -4,14 +4,21 @@ Created on 17.10.2012
 
 @author: unax
 '''
+DEFAULT_LOGGER = 'django_rediscache'
 
-DEBUG = False
-ABSOLUTE_VERSION_LIMIT = 4294967294
+DEFAULT_TIMEOUT = SERVICE_TIME = 60
 
-posible_options = ('list',
-                   'get',
-                   'reference',
-                   'count')
+
+# is possible theoretically
+ABSOLUTE_VERSION_LIMIT = 2 ** 32
+
+posible_options = (
+   'list',
+   'reference',
+   'get',
+   'list_reference',
+   'count')
+
 
 class ClassProperty(object):
     def __init__(self, getter, setter):
@@ -24,8 +31,10 @@ class ClassProperty(object):
     def __set__(self, cls, value):
         getattr(cls, self.setter)(value)
 
+
 class MetaSettings(type):
     options = ClassProperty('get_options', 'set_options')
+
 
 class LazySettings(object):
     __metaclass__ = MetaSettings
@@ -38,16 +47,20 @@ class LazySettings(object):
         if cls.__this is None:
             cls.__this = super(LazySettings, cls).__new__(cls)
         return cls.__this
-    
+
     def create(self, **options):
         conf = None
-        if len(options) > 1 and 'redis' in options:
+        if options and 'redis' in options:
             conf = options
         else:
-            from django.conf import settings
-            conf = getattr(settings, 'DJANGO_REDISCACHE', None)
+            try:
+                # used with django
+                from django.conf import settings
+                conf = getattr(settings, 'DJANGO_REDISCACHE', None)
+            except ImportError:
+                return False
 
-        if conf:
+        if dict:
             scheme = conf.get('scheme')
             self.__class__.__settings = conf
             for model in scheme:
@@ -76,7 +89,8 @@ class LazySettings(object):
     @property
     def content(self):
         if self.__settings is None and not self.create():
-            raise Exception('Django rediscache error! No settings.')
+            raise NotImplementedError(
+                'Empty settings! Check settings.DJANGO_REDISCACHE')
         return self.__settings
 
     @property

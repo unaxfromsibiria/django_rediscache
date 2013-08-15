@@ -5,20 +5,24 @@ Created on 08.03.2012
 @author: unax
 '''
 
-from django.db import models
-from datetime import datetime
-from hashlib import sha1, md5
-from zlib import crc32
-from re import _pattern_type
-from django.db.models.query import QuerySet
 from config import LazySettings
+from datetime import datetime
+from django.db import models
+from django.db.models.query import QuerySet
+from django.utils.encoding import smart_str
+from hashlib import sha1, md5
+from re import _pattern_type
+from zlib import crc32
 
-hash_func = {'md5'  : lambda st: md5(st).hexdigest(),
-             'sha1' : lambda st: sha1(st).hexdigest(),
-             'crc'  : lambda st: hex(crc32(st)) }
+
+hash_func = {
+    'md5': lambda st: md5(st).hexdigest(),
+    'sha1': lambda st: sha1(st).hexdigest(),
+    'crc': lambda st: hex(crc32(st))}
 
 
 config = LazySettings()
+
 
 class CacheNameMixer(object):
     __line = None
@@ -54,8 +58,8 @@ class CacheNameMixer(object):
         return self.__line is not None and len(self.__line) > 0
 
     def __create_str(self, query_obj):
-        if isinstance(query_obj, (unicode, str)):
-            return unicode(query_obj)
+        if isinstance(query_obj, basestring):
+            return smart_str(query_obj)
         elif isinstance(query_obj, (int, float)):
             return str(query_obj)
         elif isinstance(query_obj, datetime):
@@ -63,13 +67,15 @@ class CacheNameMixer(object):
         elif isinstance(query_obj, models.Model):
             return str(query_obj.pk)
         elif isinstance(query_obj, _pattern_type):
-            return "regex(%s)" % query_obj.pattern
+            return "regex({0})".format(query_obj.pattern)
         elif isinstance(query_obj, dict):
             return self.__parse(query_obj)
         elif isinstance(query_obj, tuple):
-            return "(%s)" % (",".join([ self.__create_str(obj) for obj in query_obj ]))          
+            return "({0})".format(
+                ",".join([self.__create_str(obj) for obj in query_obj]))
         elif isinstance(query_obj, list) or isinstance(query_obj, QuerySet):
-            return "[%s]" % (",".join([ self.__create_str(obj) for obj in query_obj ]))
+            return "[{0}]".format(
+                ",".join([self.__create_str(obj) for obj in query_obj]))
         else:
             try:
                 return str(query_obj)
@@ -77,19 +83,22 @@ class CacheNameMixer(object):
                 pass
         return 'unknown_type'
 
-    def __parse(self, query_dict): # query_dict is dict, list or tuple
+    def __parse(self, query_dict):
         if isinstance(query_dict, dict) and query_dict.keys() > 0:
             query_line = []
-            for key in query_dict:                
-                query_line.append(u'%s=%s' % (key, self.__create_str(query_dict.get(key))))
+            for key in query_dict:
+                query_line.append(u'{0}={1}'.format(
+                    key, self.__create_str(query_dict.get(key))))
             return (u"|".join(query_line)).encode('utf8')
         elif isinstance(query_dict, tuple) or isinstance(query_dict, list):
-            return (u"(%s)" % (u",".join([ self.__create_str(key) for key in query_dict ]))).encode('utf8')
+            return (u"({0})".format(
+                u",".join([self.__create_str(key)
+                    for key in query_dict]))).encode('utf8')
         return None
 
     def append(self, query_dict):
         new_line = self.__parse(query_dict).replace(' ', '')
         if self.__line is not None and new_line is not None:
-            self.__line += '|%s' % new_line
+            self.__line += '|{0}'.format(new_line)
         elif new_line is not None:
             self.__line = new_line
