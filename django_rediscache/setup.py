@@ -36,8 +36,8 @@ def install():
     for model in get_models(include_auto_created=True):
         model_path = "{0}.{1}".format(
             model.__module__, model.__name__)
-
         model_scheme = scheme.get(model_path)
+
         if isinstance(model_scheme, dict):
             setattr(
                 model.objects.__class__,
@@ -47,8 +47,18 @@ def install():
                 model._default_manager.__class__,
                 'get_query_set',
                 get_query_set)
+            # in new django get_query_set => get_queryset why?
+            setattr(
+                model.objects.__class__,
+                'get_queryset',
+                get_query_set)
+            setattr(
+                model._default_manager.__class__,
+                'get_queryset',
+                get_query_set)
             if isinstance(model_scheme.get('reference'), int) or isinstance(model_scheme.get('all'), int):
                 _foreign_key_field_setup(model)
+
             post_delete.connect(CacheInvalidator.post_delete, sender=model)
             post_save.connect(CacheInvalidator.post_save, sender=model)
 

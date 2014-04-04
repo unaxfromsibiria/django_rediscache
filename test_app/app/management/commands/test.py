@@ -6,10 +6,19 @@ Created on 15.08.2013
 '''
 import sys
 import time
-from .models import Model1, Model2, Model3
-from random import Random
 from datetime import datetime, timedelta
-rand = Random()
+from django.core.management.base import BaseCommand
+from optparse import make_option
+from random import SystemRandom
+
+from app.models import Model1, Model2, Model3
+
+
+rand = SystemRandom()
+
+
+def stdout(text):
+    print text
 
 
 def random_hex(size=rand.randint(8, 32)):
@@ -17,14 +26,14 @@ def random_hex(size=rand.randint(8, 32)):
         for _ in range(size)])
 
 
-def random_date(interval=(datetime(2013, 8, 1), datetime(2013, 8, 30))):
+def random_date(interval=(datetime(2014, 1, 1), datetime(2014, 12, 31))):
     s = int((interval[1] - interval[0]).total_seconds())
     return interval[0] + timedelta(seconds=rand.randint(1, s - 1))
 
 
 def create_models(n=100, only=[1, 2, 3]):
     if 1 in only:
-        print 'will be created {0} Model1'.format(n)
+        stdout('will be created {0} Model1'.format(n))
         for _ in range(n):
             m = Model1(
                name=random_hex(),
@@ -33,7 +42,7 @@ def create_models(n=100, only=[1, 2, 3]):
             m.save()
 
     if 2 in only:
-        print 'will be created {0} Model2'.format(n)
+        stdout('will be created {0} Model2'.format(n))
         for _ in range(n):
             m = Model2(
                name=random_hex(),
@@ -43,7 +52,7 @@ def create_models(n=100, only=[1, 2, 3]):
             m.save()
 
     if 3 in only:
-        print 'will be created {0} Model3'.format(n)
+        stdout('will be created {0} Model3'.format(n))
         for _ in range(n):
             m = Model3(
                name=random_hex(),
@@ -61,7 +70,7 @@ def get_test(n=1000):
     for k in pk_list:
         m = Model1.objects.get(pk=k)
 
-    print 'Get test (operations count: {0}):'.format(n)
+    stdout('Get test (operations count: {0}):'.format(n))
     start_time = time.time()
     s = 0
     for _ in range(n):
@@ -69,9 +78,9 @@ def get_test(n=1000):
         m = Model1.objects.get(pk=k)
         s += sys.getsizeof(m)
 
-    print 'time: {0}'.format(str(time.time() - start_time))
-    print 'total lists size {0} mb'.format(
-        str(float(s) / float(1024 ** 2))[0:5])
+    stdout('time: {0}'.format(str(time.time() - start_time)))
+    stdout('total lists size {0} mb'.format(
+        str(float(s) / float(1024 ** 2))[0:5]))
 
 
 dates = [random_date() for i in range(5)]
@@ -89,7 +98,7 @@ def list_and_count_test(n=1000):
 
     m = 0
     s = 0
-    print 'Count&List test (operations count: {0}):'.format(n)
+    stdout('Count&List test (operations count: {0}):'.format(n))
     start_time = time.time()
     for i in range(n):
         models = Model1.objects.filter(created__lt=rand.choice(dates))
@@ -107,10 +116,10 @@ def list_and_count_test(n=1000):
                 if obj.pk:
                     s += sys.getsizeof(obj)
 
-    print 'time: {0}'.format(str(time.time() - start_time))
-    print 'object count: {0}'.format(m)
-    print 'total lists size {0} mb'.format(
-        str(float(s) / float(1024 ** 2))[0:5])
+    stdout('time: {0}'.format(str(time.time() - start_time)))
+    stdout('object count: {0}'.format(m))
+    stdout('total lists size {0} mb'.format(
+        str(float(s) / float(1024 ** 2))[0:5]))
 
 
 def reference_get_test(n=1000):
@@ -122,7 +131,7 @@ def reference_get_test(n=1000):
     for k in pk_list:
         m = Model2.objects.get(pk=k)
 
-    print 'Reference get test (operations count: {0}):'.format(n)
+    stdout('Reference get test (operations count: {0}):'.format(n))
     start_time = time.time()
     s = 0
     for i in range(n):
@@ -130,9 +139,9 @@ def reference_get_test(n=1000):
         m = Model2.objects.get(pk=k)
         s += sys.getsizeof(m) + sys.getsizeof(m.model1)
 
-    print 'time: {0}'.format(str(time.time() - start_time))
-    print 'total lists size {0} mb'.format(
-        str(float(s) / float(1024 ** 2))[0:5])
+    stdout('time: {0}'.format(str(time.time() - start_time)))
+    stdout('total lists size {0} mb'.format(
+        str(float(s) / float(1024 ** 2))[0:5]))
 
 
 def reference_list_test(n=1000):
@@ -144,7 +153,7 @@ def reference_list_test(n=1000):
     for k in pk_list:
         m = Model3.objects.get(pk=k)
 
-    print 'Reference list test (operations count: {0}):'.format(n)
+    stdout('Reference list test (operations count: {0}):'.format(n))
     start_time = time.time()
     s = 0
     for i in range(n):
@@ -154,6 +163,36 @@ def reference_list_test(n=1000):
         for m1 in m.model1.all():
             s += sys.getsizeof(m1)
 
-    print 'time: {0}'.format(str(time.time() - start_time))
-    print 'total lists size {0} mb'.format(
-        str(float(s) / float(1024 ** 2))[0:5])
+    stdout('time: {0}'.format(str(time.time() - start_time)))
+    stdout('total lists size {0} mb'.format(
+        str(float(s) / float(1024 ** 2))[0:5]))
+
+
+class Command(BaseCommand):
+    help = """Test cache. Run example:
+        python manage.py test --method get_test --params '{"n":10}'"""
+
+    option_list = BaseCommand.option_list + (
+        make_option('--method',
+            default='',
+            help='method in module'),
+        make_option('--params',
+            default='{}',
+            help='JSON object as method kwargs'),
+        )
+
+    _methods = {
+        'create_models': create_models,
+        'get_test': get_test,
+        'list_and_count_test': list_and_count_test,
+        'reference_get_test': reference_get_test,
+        'reference_list_test': reference_list_test,
+    }
+
+    def handle(self, *args, **options):
+        # thread count
+        method = self._methods.get(options.get('method'))
+        params = options.get('params') or '{}'
+        import json
+        params = json.loads(params)
+        method(**params)

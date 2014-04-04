@@ -7,6 +7,7 @@ Created on 15.08.2013
 
 import os
 import re
+import tempfile
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -29,7 +30,7 @@ LANGUAGE_CODE = 'ru'
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'static', 'content', 'media')
 MEDIA_URL = '/media/'
@@ -42,21 +43,25 @@ STATICFILES_DIRS = (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_ROOT, 'main.db'),
+        'NAME': os.path.join(tempfile.gettempdir(), 'test_app_main.db'),
     }
 }
 
 DJANGO_REDISCACHE = {
     'scheme': {
-        'django_rediscache_test.app.models.Model1': {'all': 300},
-        'django_rediscache_test.app.models.Model2': {'all': 300},
-        'django_rediscache_test.app.models.Model3': {'all': 300},
+        'app.models.Model1': {'all': 300},
+        'app.models.Model2': {'all': 300},
+        'app.models.Model3': {'all': 300},
     },
     'redis': {
         'host': 'localhost',
         'port': 6379,
         'db': 0,
         'socket_timeout': 5,
+        'pool': {
+            'size': 20,
+            'class': 'django_rediscache.pool.GeventConnectionPool',
+        },
     },
     'used': True,
     'keyhashed': 'crc',
@@ -98,8 +103,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'app',
     'django_rediscache',
-    'django_rediscache_test.app',
 )
 
 CACHE_USE = True
