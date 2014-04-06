@@ -12,15 +12,24 @@ Dependencies
 - python-redis
 
 
+Last changes
+=====
+- go to pypi
+- connection pool for gevent. Protection of connections limit exceeding.
+- fix for last django changes
+
+
 Plans
 =====
-Edition for gevent. Need an modification for correctly work with gevent.
+Still have problems with some queries. I will win this soon.
 
 
 Usage
 =====
 
-Allows you to cache Django ORM models.
+Allows you to cache Django ORM models. Install:
+
+	pip search django_rediscache
 
 In general, this project is analog  of `mongoengine <https://github.com/unaxfromsibiria/mongoengine_rediscache>`_
 
